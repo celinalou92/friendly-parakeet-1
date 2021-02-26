@@ -9,24 +9,24 @@ var generateBtn = document.querySelector("#generate");
 // All the functions that are responsible to return a random value thatt we will use to create password.
 function getRandomLower() {
 	return String.fromCharCode(Math.floor(Math.random() * 26) + 97);
-}
+};
 function getRandomUpper() {
 	return String.fromCharCode(Math.floor(Math.random() * 26) + 65);
-}
+};
 function getRandomNumber() {
-	return String.fromCharCode(Math.floor(Math.random() * 9) + 1);
-}
+	return String.fromCharCode(Math.floor(Math.random() * 10) + 48);
+};
 function getRandomSymbol() {
 	const symbols = '~!@#$%^&*()_+{}":?><;.,';
 	return symbols[Math.floor(Math.random() * symbols.length)];
-}
+};
 
 // object containing result of all random functions
 let randomFunc = {
-	lower: getRandomLower(),
-	upper: getRandomUpper(),
-	number: getRandomNumber(),
-	symbol: getRandomSymbol(),
+	lower: getRandomLower,
+	upper: getRandomUpper,
+	number: getRandomNumber,
+	symbol: getRandomSymbol,
 }
 
 // function for series of prompts that determined characters to include
@@ -81,33 +81,34 @@ function generatePassword( lower, upper, number, symbol) {
       alert("Please enter a valid entry");
       generatePassword();
     } 
-    promptSeries();
+    let selectedChar = promptSeries();
     // password is generated from selection
+    console.log(selectedChar);
 
-    const typesArr = [ randomFunc.lower, randomFunc.upper, randomFunc.upper, randomFunc.upper]
+    // function to check if selectedChar == true then add it to options 
+    let typesArr = []
+    if(selectedChar[0] === true){
+      typesArr.push(randomFunc.lower); 
+    }
+    if(selectedChar[1] === true){
+      typesArr.push(randomFunc.upper);
+    }
+    if(selectedChar[2] === true){
+      typesArr.push(randomFunc.number);
+    }
+    if(selectedChar[3] === true){
+      typesArr.push(randomFunc.symbol);
+    }
 
-    console.log(typesArr)
-    console.log(charSeletion);
-
+    // something to use the typesArr to randomly generate a char and add all the results together
+    let password = "";
   	for (let i = 0; i < pLength; i++) {
-	  	typesArr.forEach(type => {
-	  		const funcName = Object.keys(type)[0];
-        console.log(funcName)
-	  		// generatedPassword += randomFunc[funcName]();
-	  	});
+	  	let characterIndex = Math.floor(Math.random() * typesArr.length);
+       password += typesArr[characterIndex]();
   	}
-	  return generatedPassword.slice(0, pLength)
-									.split('').sort(() => Math.random() - 0.5)
-									.join('');
+    console.log(password);
 
-    // use pLength to determine how many characters to randomly create 
-    console.log(Object.values(randomFunc))
-// TODO Using this code as reference https://codepen.io/dev_loop/pen/vYYxvbz?editors=1010
-
-    // use charSelection to tell it what characters to include
-
-  
-
+    return password;
 }
   
 
@@ -120,9 +121,6 @@ function writePassword() {
   passwordText.value = password;
 
 }
-
-
-
 
 // Add event listener to generate button
 generateBtn.addEventListener("click", writePassword);
